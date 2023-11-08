@@ -13,12 +13,19 @@ public class ScreenDef {
     // Duplicate identifiers mean that one or more ScreenDefs will be ignored
     public String id;
     // Optional
+    // Do we trust client scripts to request this screen be displayed for the client. Arbitrarily allowing
+    // any player to run any screen could allow operations that they should not be permitted to perform.
+    public boolean allowClientRequest;
+    // Optional
     // Determines whether the screen should pause activity in the world. Only matters in single player.
     // Defaults to false
     public boolean pause;
     // Optional
     // Title for the screen. Not usually displayed.
     public String title;
+    // Optional
+    // Width for the screen. Widget positions fit inside set width. If zero, uses full width.
+    public int screenWidth;
     // Optional
     // Valid values:
     //      TOP_LEFT, TOP_MIDDLE, TOP_RIGHT
@@ -27,14 +34,6 @@ public class ScreenDef {
     // Default anchor. If set, and a child ComponentDef lacks an anchor, the ScreenDef anchor will be used.
     // Used to determine what the coordinates are relative to.
     public AnchorOption defaultAnchor;
-    // Optional
-    // Valid values:
-    //      PLAYER
-    //      SERVER
-    // Only the value 'player' currently matters. If this value is set to 'player', the command context will
-    // be executed as the player, allowing use of, for example, @s target selectors.
-    // If an '@s' is detected in the command string, 'player' context will be assumed.
-    public CommandStackOption defaultPreferCommandStack;
     // Optional
     // A command to be run when the screen is closed, whether by hitting escape or by clicking a widget while
     // closeOnInteract is true.

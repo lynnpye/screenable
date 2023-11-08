@@ -1,6 +1,7 @@
 package com.pyehouse.screenable.common.network;
 
 import com.pyehouse.screenable.client.S2CScreenDisplayHandler;
+import com.pyehouse.screenable.server.C2SRequestScreenHandler;
 import com.pyehouse.screenable.server.C2SRunActionHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +20,7 @@ public class NetworkConfig {
     // channel registration indices
     public static final int S2C_SCREEN_DISPLAY = 1;
     public static final int C2S_RUN_ACTION = 2;
+    public static final int C2S_REQUEST_SCREEN = 3;
     // chan... .. ..
     public static final ResourceLocation channelURL = new ResourceLocation(MODID, "networkchannel");
 
@@ -50,6 +52,15 @@ public class NetworkConfig {
                 C2SRunActionMessage::encode,
                 C2SRunActionMessage::decode,
                 C2SRunActionHandler::onRunAction,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        CHANNEL.registerMessage(
+                C2S_REQUEST_SCREEN,
+                C2SRequestScreenMessage.class,
+                C2SRequestScreenMessage::encode,
+                C2SRequestScreenMessage::decode,
+                C2SRequestScreenHandler::onRequestScreen,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
     }

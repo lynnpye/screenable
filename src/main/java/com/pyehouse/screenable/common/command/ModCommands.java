@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class ModCommands {
     public static final String CMD_screenablecommand = "screenable";
@@ -40,14 +41,22 @@ public class ModCommands {
 
     private static int showScreenCommand(CommandContext<CommandSourceStack> commandContext) throws CommandSyntaxException {
         Player player = commandContext.getSource().getPlayer();
+        if (player == null) {
+            return 1;
+        }
         String screenDefId = StringArgumentType.getString(commandContext, CMD_showscreen);
         ScreenDef screenDef = Config.getScreenDef(screenDefId);
         if (screenDef == null) {
-            commandContext.getSource().sendFailure(Component.literal(String.format("No screenDef exists with screenDef id [%s]", screenDefId)));
+            if (ServerLifecycleHooks.getCurrentServer().isSingleplayer() || player.hasPermissions(4)) {
+                commandContext.getSource().sendFailure(Component.literal(String.format("No screenDef exists with screenDef id [%s]", screenDefId)));
+            } else {
+                commandContext.getSource().sendFailure(Component.literal(String.format("You lack sufficient permissions to request that screen")));
+            }
             return 1;
         }
-        Screenable.requestClientScreenDisplay(screenDef, player);
-        commandContext.getSource().sendSuccess(Component.literal("showing screen"), true);
+        Screenable.requestClientScreenDisplay(screenDef, player, () -> {
+            commandContext.getSource().sendFailure(Component.literal(String.format("You lack sufficient permissions to request that screen")));
+        });
         return 1;
     }
 

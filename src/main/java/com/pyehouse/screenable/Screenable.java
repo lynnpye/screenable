@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.pyehouse.screenable.client.ClientEventRegistrar;
 import com.pyehouse.screenable.common.CommonEventRegistrar;
 import com.pyehouse.screenable.common.Config;
+import com.pyehouse.screenable.common.network.C2SRequestScreenMessage;
 import com.pyehouse.screenable.common.network.C2SRunActionMessage;
 import com.pyehouse.screenable.common.network.S2CScreenDisplayMessage;
 import com.pyehouse.screenable.common.screendef.ScreenDef;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -50,12 +52,25 @@ public class Screenable
     }
 
     public static void requestClientScreenDisplay(ScreenDef screenDef, @Nonnull Player player) {
-        S2CScreenDisplayMessage message = new S2CScreenDisplayMessage(screenDef);
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
+        requestClientScreenDisplay(screenDef, player, null);
+    }
+
+    public static void requestClientScreenDisplay(ScreenDef screenDef, @Nonnull Player player, Runnable onInsufficientPermissions) {
+        if (screenDef.allowClientRequest || ServerLifecycleHooks.getCurrentServer().isSingleplayer() || player.hasPermissions(4)) {
+            S2CScreenDisplayMessage message = new S2CScreenDisplayMessage(screenDef);
+            CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
+        } else if (onInsufficientPermissions != null) {
+            onInsufficientPermissions.run();
+        }
     }
 
     public static void requestServerRunAction(String screenId, String componentId, UUID playerUUID) {
         C2SRunActionMessage message = new C2SRunActionMessage(screenId, componentId, playerUUID);
+        CHANNEL.send(PacketDistributor.SERVER.noArg(), message);
+    }
+
+    public static void requestScreenForClient(String screenId) {
+        C2SRequestScreenMessage message = new C2SRequestScreenMessage(screenId);
         CHANNEL.send(PacketDistributor.SERVER.noArg(), message);
     }
 

@@ -44,14 +44,6 @@ public class ComponentDef {
     //      BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT
     // Used to determine what the coordinates are relative to.
     public AnchorOption anchor;
-    // Optional
-    // Valid values:
-    //      PLAYER
-    //      SERVER
-    // Only the value 'player' currently matters. If this value is set to 'player', the command context will
-    // be executed as the player, allowing use of, for example, @s target selectors.
-    // If an '@s' is detected in the command string, 'player' context will be assumed.
-    public CommandStackOption preferCommandStack;
 
     public ComponentDef() {
     }
@@ -65,16 +57,16 @@ public class ComponentDef {
             Screenable.logError("ComponentDef id[%s] requires type", id);
             return false;
         }
-        if (width < 1) {
-            Screenable.logError("ComponentDef id[%s] width must be a positive integer", id);
+        if (width < 1 && type != ModComponentType.LABEL) {
+            Screenable.logError("ComponentDef id[%s] width must be a positive integer (but with type LABEL, setting width to 0 allows unlimited width)", id);
             return false;
         }
         if (height < 1) {
             Screenable.logError("ComponentDef id[%s] height must be a positive integer", id);
             return false;
         }
-        if (callback == null) {
-            Screenable.logError("ComponentDef id[%s] requires a callback", id);
+        if (type.isCallbackRequired() && callback == null) {
+            Screenable.logError("ComponentDef id[%s] with type[%s] requires a callback", id, type);
             return false;
         }
         if ((text == null || text.isBlank()) && (langKey == null || langKey.isBlank())) {

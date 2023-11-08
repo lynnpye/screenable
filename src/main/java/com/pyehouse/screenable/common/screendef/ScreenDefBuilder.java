@@ -15,6 +15,13 @@ public class ScreenDefBuilder {
     //
     // ScreenDef attributes
     //
+    @Info("Do we trust client scripts to request this screen be displayed for the client. Arbitrarily allowing" +
+            " any player to run any screen could allow operations that they should not be permitted to perform.")
+    public ScreenDefBuilder allowClientRequest(boolean allowClientRequest) {
+        this.screenDef.allowClientRequest = allowClientRequest;
+        return this;
+    }
+
     @Info("Optional: In single player, should displaying this screen pause activity")
     public ScreenDefBuilder pause(boolean pause) {
         this.screenDef.pause = pause;
@@ -27,15 +34,15 @@ public class ScreenDefBuilder {
         return this;
     }
 
-    @Info("Optional: Provides a default anchor position. Defaults to TOP_LEFT")
-    public ScreenDefBuilder defaultAnchor(AnchorOption defaultAnchor) {
-        this.screenDef.defaultAnchor = defaultAnchor;
+    @Info("Optional: If set greater than zero, fits widgets inside a centered area of the indicated width")
+    public ScreenDefBuilder screenWidth(int screenWidth) {
+        this.screenDef.screenWidth = screenWidth;
         return this;
     }
 
-    @Info("Optional: Set whether to default to running commands in the player context by default")
-    public ScreenDefBuilder defaultPreferCommandStack(CommandStackOption defaultPreferCommandStack) {
-        this.screenDef.defaultPreferCommandStack = defaultPreferCommandStack;
+    @Info("Optional: Provides a default anchor position. Defaults to TOP_LEFT")
+    public ScreenDefBuilder defaultAnchor(AnchorOption defaultAnchor) {
+        this.screenDef.defaultAnchor = defaultAnchor;
         return this;
     }
 
@@ -121,12 +128,6 @@ public class ScreenDefBuilder {
     @Info("Optional: Defaults to TOP_LEFT or the defaultAnchor if defined. Specifies which part of the screen the component will be positioned relative to")
     public ScreenDefBuilder anchor(AnchorOption anchor) {
         this.componentDef.anchor = anchor;
-        return this;
-    }
-
-    @Info("Optional: Indicates the preferred command stack the action should be run in")
-    public ScreenDefBuilder preferCommandStack(CommandStackOption preferCommandStack) {
-        this.componentDef.preferCommandStack = preferCommandStack;
         return this;
     }
 }
