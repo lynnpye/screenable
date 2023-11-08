@@ -1,15 +1,11 @@
 package com.pyehouse.screenable.client.kubejs;
 
-import com.pyehouse.screenable.Screenable;
 import com.pyehouse.screenable.kubejs.ScreenableJS;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class BoundActionHandler {
-    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerKeyBinds(final RegisterKeyMappingsEvent event) {
         for (ScreenableJS.ClientJS.Binding binding : ScreenableJS.ClientJS.bindings) {
             KeyMapping mapping = new KeyMapping(binding.langKey(), binding.keyConflictContext(), binding.keyModifier(),
